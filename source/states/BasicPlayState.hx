@@ -126,6 +126,10 @@ class BasicPlayState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		FlxG.watch.addQuick('Position', Conductor.songPosition);
+		FlxG.watch.addQuick('Step', Conductor.stepPosition);
+		FlxG.watch.addQuick('Beat', Conductor.beatPosition);
+
 		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 
@@ -142,12 +146,6 @@ class BasicPlayState extends MusicBeatState
 		}
 
 		DiscordPresence.changePresence('Playing ${SONG.song}', null, null, true, Conductor.boundSong.length - Conductor.songPosition);
-
-		// need a better way :sob:
-		if (!updateTime)
-		{
-			Conductor.boundSong.stop();
-		}
 
 		if (startingSong)
 		{

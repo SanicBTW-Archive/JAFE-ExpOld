@@ -15,21 +15,22 @@ using StringTools;
 class BeatmapConverter
 {
 	private static var beatmap:Beatmap;
-	private static var fnfChart:Song = {
-		song: "parsed_beatmap",
-		stage: "stage",
-		speed: 3,
-		needsVoices: false,
-		bpm: 250,
-		notes: []
-	};
 
 	public static function convertBeatmap(filePath:String)
 	{
-		var parentDir:String = Path.join([Path.withoutExtension(filePath)]);
+		var fnfChart:Song = {
+			song: "parsed_beatmap",
+			stage: "stage",
+			speed: 3,
+			needsVoices: false,
+			bpm: 250,
+			notes: []
+		};
+		var parentDir:String = Path.join([Path.directory(filePath)]);
 		var audioDir:String = Path.join([parentDir, "audio.ogg"]);
 		var map:Array<String> = File.getContent(filePath).split("\n");
 		beatmap = new Beatmap(map);
+		trace(audioDir);
 
 		trace('${map.length - (beatmap.find("[HitObjects]") + 1)} notes');
 
@@ -39,21 +40,21 @@ class BeatmapConverter
 		beatmap.Title = beatmap.getOption("Title");
 		beatmap.TitleUnicode = beatmap.getOption("TitleUnicode");
 
-		var bpm:Float = 0;
-		var bpmCount:Float = 0;
+		/*
+			var bpm:Float = 0;
+			var bpmCount:Float = 0;
 
-		for (i in beatmap.find('[TimingPoints]')...(beatmap.find('[HitObjects]') - 2))
-		{
-			if (map[i].split(",")[6] == "1")
+			for (i in beatmap.find('[TimingPoints]')...(beatmap.find('[HitObjects]') - 2))
 			{
-				bpm = bpm + Std.parseFloat(map[i].split(",")[1]);
-				bpmCount++;
-			}
-			beatmap.BPM = bpm / bpmCount;
-		}
+				if (map[i].split(",")[6] == "1")
+				{
+					bpm = bpm + Std.parseFloat(map[i].split(",")[1]);
+					bpmCount++;
+				}
+				beatmap.BPM = bpm / bpmCount;
+		}*/
 
-		Conductor.changeBPM(beatmap.BPM);
-		fnfChart.bpm = beatmap.BPM;
+		Conductor.changeBPM(fnfChart.bpm);
 		if (FileSystem.exists(audioDir))
 			Cache.getSound(audioDir, true);
 
@@ -122,7 +123,6 @@ class BeatmapConverter
 
 		trace("done parsing");
 		Conductor.bindSong(Cache.getSound(audioDir, true), fnfChart.bpm);
-		Conductor.songData = fnfChart;
 		ScriptableState.switchState(new BasicPlayState());
 	}
 
@@ -150,13 +150,11 @@ class BeatmapConverter
 			{
 				if (noteArray[i][i2] == from_note)
 				{
-					trace('Found note');
 					return i;
 				}
 			}
 		}
 
-		trace("Couldn't find note " + from_note + ' in note array');
 		return 0;
 	}
 }

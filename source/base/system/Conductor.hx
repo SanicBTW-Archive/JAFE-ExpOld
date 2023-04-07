@@ -89,7 +89,9 @@ class Conductor
 			var bps:Float = (bpm / 60) / songRate;
 
 			var nearestNote:Note = ChartLoader.unspawnedNoteList[0];
-			var noteDiff:Float = (nearestNote.strumTime - songPosition) / 1000;
+			var noteDiff:Float = 1;
+			if (nearestNote != null)
+				noteDiff = (nearestNote.strumTime - songPosition) / 1000;
 
 			songSpeed = baseSpeed / (bps * noteDiff);
 		}
