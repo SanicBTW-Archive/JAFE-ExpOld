@@ -1,10 +1,18 @@
 package base.system;
 
+import flixel.FlxG;
+import flixel.system.FlxSound;
+import funkin.ChartLoader;
+import funkin.CoolUtil;
+import haxe.Exception;
 import haxe.io.Path;
 import lime.app.Application;
 import lime.system.System;
+import openfl.media.Sound;
 import osu.BeatmapConverter;
+import states.BasicPlayState;
 import sys.FileSystem;
+import sys.io.File;
 
 using StringTools;
 
@@ -41,6 +49,24 @@ class DragDrop
 				case "osu":
 					{
 						BeatmapConverter.convertBeatmap(filePath);
+					}
+
+				case "json":
+					{
+						var parentDir:String = Path.join([Path.directory(filePath)]);
+
+						var coolSwag:Song = CoolUtil.loadSong(File.getContent(filePath));
+						var soundDir:String = Path.join([parentDir, "Inst.ogg"]);
+
+						if (!FileSystem.exists(soundDir))
+							throw new Exception("Sound file not found on " + parentDir);
+
+						var sound:Sound = Sound.fromFile(soundDir);
+
+						coolSwag = ChartLoader.loadSong(coolSwag);
+						Conductor.bindSong(sound, coolSwag.bpm);
+						Conductor.songData = coolSwag;
+						ScriptableState.switchState(new BasicPlayState());
 					}
 			}
 		});

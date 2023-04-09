@@ -133,6 +133,9 @@ class BasicPlayState extends MusicBeatState
 		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 		camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 
+		if (!updateTime)
+			Conductor.boundSong.stop();
+
 		while ((ChartLoader.unspawnedNoteList[0] != null) && (ChartLoader.unspawnedNoteList[0].strumTime - Conductor.songPosition) < 3500)
 		{
 			var unspawnNote:Note = ChartLoader.unspawnedNoteList[0];
@@ -184,6 +187,12 @@ class BasicPlayState extends MusicBeatState
 	override public function onActionPressed(action:String)
 	{
 		super.onActionPressed(action);
+
+		if (action == "confirm")
+		{
+			Conductor.boundSong.play();
+			return;
+		}
 
 		if (curStrumLine.botPlay || !receptorActionList.contains(action))
 			return;

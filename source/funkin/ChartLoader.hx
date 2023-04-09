@@ -91,6 +91,7 @@ class ChartLoader
 				switch (songNotes[1])
 				{
 					default:
+						// trace("Am i fucking parsing notes or soemthing");
 						var strumTime:Float = songNotes[0];
 						var noteData:Int = Std.int(songNotes[1] % 4);
 						var hitNote:Bool = section.mustHitSection;
@@ -125,7 +126,6 @@ class ChartLoader
 		}
 
 		unspawnedNoteList.sort(sortByShit);
-		Conductor.songData = swagSong;
 	}
 
 	private static function sortByShit(Obj1:Note, Obj2:Note):Int
